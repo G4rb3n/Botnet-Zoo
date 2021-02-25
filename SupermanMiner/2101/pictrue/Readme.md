@@ -20,7 +20,7 @@
 
 [3] 删除/var/tmp/下的.system-python3.8-Updates和.Javadoc 文件夹。
 
-![SupermanMiner原理图](https://github.com/G4rb3n/Botnet-Zoo/blob/main/SupermanMiner/2101/pictrue/SupermanMiner.png)
+![SupermanMiner原理图](https://github.com/G4rb3n/Malware-Picture/blob/master/Miner/SupermanMiner/SupermanMiner.png)
 
 参考链接
 ```

@@ -16,7 +16,7 @@
 
 [4] 如非主动安装masscan/zgrab，将其卸载。
 
-![TeamTNT原理图](https://github.com/G4rb3n/Botnet-Zoo/blob/main/TeamTNT/2101/pictrue/TeamTNT.png)
+![TeamTNT原理图](https://github.com/G4rb3n/Malware-Picture/blob/master/Miner/TeamTNT/2021-1/TeamTNT.png)
 
 参考链接
 ```

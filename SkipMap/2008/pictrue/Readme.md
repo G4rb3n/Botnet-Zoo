@@ -1,1 +1,1 @@
-![SkidMap原理图](https://github.com/G4rb3n/Botnet-Zoo/blob/main/SkipMap/2008/pictrue/SkidMap.jpg)
+![SkidMap原理图](https://github.com/G4rb3n/Malware-Picture/blob/master/Miner/SkidMap/SkidMap.jpg)

