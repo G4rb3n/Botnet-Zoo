@@ -10,7 +10,7 @@
 
 [3] 受害主机隐私数据拆分为多个文件独立上传，并附带受害主机公网IP地址信息。该团伙收集目标计算机信息，显然是为了下一步的攻击更加有效。
 
-![TeamTNT原理图](https://github.com/G4rb3n/Botnet-Zoo/TeamTNT/2012/pictrue/TeamTNT.png)
+![TeamTNT原理图](https://github.com/G4rb3n/Botnet-Zoo/blob/main/TeamTNT/2012/pictrue/TeamTNT.png)
 
 参考链接
 ```

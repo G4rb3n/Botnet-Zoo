@@ -31,7 +31,7 @@ hxxp://185.239.242.71/ldr.sh
 Nexus，mysql，tomcat使用强密码
 weblogic升级到最新版本
 
-![Sysrv-hello原理图](https://github.com/G4rb3n/Botnet-Zoo/Sysrv-hello/2101/pictrue/Sysrv-hello.png)
+![Sysrv-hello原理图](https://github.com/G4rb3n/Botnet-Zoo/blob/main/Sysrv-hello/2101/pictrue/Sysrv-hello.png)
 
 参考链接
 ```
