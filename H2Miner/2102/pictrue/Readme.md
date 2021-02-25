@@ -6,7 +6,7 @@
 
 攻击者合并使用了多个漏洞攻击武器，除利用该团伙惯用的XXL-JOB未授权命令执行攻击之外，还使用了PHPUnit远程代码执行漏洞（CVE-2017-9841)、Supervisord远程命令执行漏洞（CVE-2017-11610）和ThinkPHP 5.X远程命令执行漏洞进行攻击扩散，最终投递名为kdevtmpfsi的XMR门罗币矿机组件挖矿牟利。
 
-![H2Miner原理图](https://github.com/G4rb3n/Malware-Picture/blob/master/Miner/H2Miner/H2Miner_2012.png)
+![H2Miner原理图](https://github.com/G4rb3n/Malware-Picture/blob/master/Miner/H2Miner/2102/H2Miner.png)
 
 参考链接
 ```

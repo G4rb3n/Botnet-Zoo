@@ -6,7 +6,7 @@
 
 腾讯安全专家建议XXL-JOB管理任务的政企用户及时加固系统配置、修补漏洞，避免遭遇更多的黑产攻击。用户可参考腾讯安全产品响应清单指引，及时检测、清理恶意威胁。
 
-![H2Miner原理图](https://github.com/G4rb3n/Malware-Picture/blob/master/Miner/H2Miner/H2Miner_2012.png)
+![H2Miner原理图](https://github.com/G4rb3n/Malware-Picture/blob/master/Miner/H2Miner/2012/H2Miner.png)
 
 参考链接
 ```
