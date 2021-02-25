@@ -1,0 +1,13 @@
+kinsing
+.ICEd-unix
+kdevtmpfsi
+/tmp/.ICE-
+crun
+javaupDates
+4444
+/tmp/jenkins
+node
+networkservice
+networkser+
+kdevtmpfs
+watchbog

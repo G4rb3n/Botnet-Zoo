@@ -1,0 +1,11 @@
+pocosow
+gakeaws
+azulu
+auto
+xmr
+mine
+monero
+slowhttp
+bash.shell
+entrypoint.sh
+/var/sbin/bash

@@ -1,0 +1,22 @@
+/bin/bash
+/bin/bash -c
+bash.shell
+cokkokotre1/update
+lchaia/xmrig
+patsissons/xmrig
+challengerd/challengerd
+pocosow
+gakeaws
+azulu
+auto
+xmr
+mine
+monero
+slowhttp
+chroot /mnt
+/var/sbin/bash
+/var/bash
+cokkokotre1/update
+lchaia/xmrig
+patsissons/xmrig
+challengerd/challengerd

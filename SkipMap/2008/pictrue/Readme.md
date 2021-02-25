@@ -1,0 +1,1 @@
+![SkidMap原理图](https://github.com/G4rb3n/Botnet-Zoo/SkipMap/2008/pictrue/SkidMap.jpg)

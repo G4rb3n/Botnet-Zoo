@@ -1,0 +1,21 @@
+version: '3'
+services:
+ malware:
+  container_name: chongfu_2012
+  image: g4rb3n/malbox
+  volumes:
+   - ./etc/chongfu.sh:/etc/chongfu.sh
+   - ./etc/chongfu.sh:/etc/rc.local
+   - ./tmp/:/tmp/
+  command:
+   - /bin/bash
+   - -c
+   - |
+    service cron start &
+    service ssh start &
+    service rsyslog start &
+    chmod 777 /tmp/wanddo &
+    chmod 777 /tmp/wanwakaung &
+    /tmp/wanddo &
+    /tmp/wanwakuang &
+    tail -f /dev/null

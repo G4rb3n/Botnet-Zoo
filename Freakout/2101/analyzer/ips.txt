@@ -1,0 +1,4 @@
+TerraMaster TOS Command Injection (CVE-2020-28188)
+Liferay Portal Insecure Deserialization (CVE-2020-7961)
+Zend Framework Remote Code Execution (CVE-2021-3007)
+CMD Injection Over HTTP

