@@ -1,6 +1,6 @@
 2020-3-3
 
-![SystemMiner原理图](https://github.com/G4rb3n/Botnet-Zoo/blob/main/SystemdMiner/2008/pictrue/SystemdMiner.jpg)
+![SystemdMiner原理图](https://github.com/G4rb3n/Botnet-Zoo/blob/main/SystemdMiner/2008/pictrue/SystemdMiner.jpg)
 
 ```
 入侵点
