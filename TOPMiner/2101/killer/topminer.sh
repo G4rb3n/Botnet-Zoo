@@ -5,9 +5,9 @@
 # 创建备份目录，以清除时间命名
 
 time=$(date | awk '{print $5}')
-log_dir="/tmp/sangfor/topminer-$time"
+log_dir="/tmp/botgak/topminer-$time"
 log_file="$log_dir/log"
-if [ ! -d "/tmp/sangfor/topminer-$time/" ]
+if [ ! -d "/tmp/botgak/topminer-$time/" ]
 then
     # 创建定时任务、文件、进程备份目录
     mkdir -p $log_dir
@@ -29,7 +29,7 @@ kill_file()
     then
         cp -n $1 $log_dir/file
         chattr -ia $1
-        echo 'sangfor' > $1
+        echo 'botgak' > $1
         chattr +ia $1
         echo "[+] clean file --> $1" | tee -a $log_file
     fi
