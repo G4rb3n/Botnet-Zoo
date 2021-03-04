@@ -1,3 +1,0 @@
-#!/bin/sh
-cd /tmp/.X25-unix/c
-./run &>/dev/null
