@@ -116,7 +116,7 @@ kill_file '/etc/ipv6_addrconf'
 kill_file '/etc/crypto'
 
 # --------------------------------------------------
-# 期初其他启动项
+# 清除其他启动项
 sed -i '/crypto/'d /etc/rc.local
 sed -i '/crypto/'d /etc/crontab
 
