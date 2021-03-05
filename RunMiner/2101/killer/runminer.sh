@@ -83,21 +83,26 @@ redirect_dns()
 # --------------------------------------------------
 # 清除runminer定时任务
 
-# 清除2101变种定时任务
-kill_cron '146.196.83.217'
 kill_cron 'task.sh'
 
 # --------------------------------------------------
 # 清除runminer病毒进程
 
 # 清除2101变种进程
-proc_id="$(ps -elf | grep -w 'tcpp' | grep -v grep | awk '{print $4}')"
+proc_id="$(ps -elf | grep '/tmp/tcpp' | grep -v grep | awk '{print $4}')"
+kill_proc $proc_id
+
+# 清除2012变种进程
+proc_id="$(ps -elf | grep '/tmp/.fsksdvsler/tcpp' | grep -v grep | awk '{print $4}')"
+kill_proc $proc_id
+
+proc_id="$(ps -elf | grep 'YmFzaCAtaSA' | grep -v grep | awk '{print $4}')"
 kill_proc $proc_id
 
 # --------------------------------------------------
 # 清除runminer病毒文件
 
-# 删除2101变种文件
 kill_file '/tmp/tcpp'
+kill_file '/tmp/.fsksdvsler/tcpp'
 
 echo "[+] end clean --> $(date)" | tee -a $log_file
